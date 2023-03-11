@@ -37,31 +37,14 @@ df['MarketSegment'] = get_numeric_value(df['MarketSegment'], ['Offline', 'Online
 df['BookingStatus'] = get_numeric_value(df['BookingStatus'], ['Canceled', 'Not_Canceled'])
 
 #Remove parking, arrival year, repeated guest (PREDICT BOOKING STATUS)
-df = df.drop(columns=['Parking', 'ArrivalYear', 'RepeatedGuest'])
 
-#Add number of children and adults
-#to make number of people column
-i = 0
-for item in df['NumAdults']:
-    df['NumAdults'][i] = df['NumAdults'][i] + df['NumChildren'][i]
-    i+=1
-df = df.rename(columns={"NumAdults":"NumPeople"})
 
-#Change NumChildren to HasChildren
-i = 0
-for item in df['NumChildren']:
-    num = df['NumChildren'][i]
+df['Number of Guests'] = df[['NumAdults', 'NumChildren']].sum(axis = 1)
+df['Has Children'] = np.where(df['NumChildren'] > 0, 1, 0)
 
-    if num > 0:
-        df['NumChildren'][i] = 1
-    else:
-        df['NumChildren'][i] = 0
-    
-    i+=1
-df = df.rename(columns={'NumChildren':'HasChildren'})
+print (df[['Number of Guests', 'Has Children']].head)
+#df[['AvgPriceMean', 'AdultCount','ChildCount','AvgNumWeekNights', 'AvgNumWeekendNights']] = grouped_df[['AvgRoomPrice', 'NumAdults','NumChildren', 'NumWeekNights', 'NumWeekendNights']].transform('mean')
+#df[['Canceled']] = grouped_df[['BookingStatus']].transform('sum')
+#pd.set_option('display.max_columns', None)
 
-# df[['AvgPriceMean', 'AdultCount','ChildCount','AvgNumWeekNights', 'AvgNumWeekendNights']] = grouped_df[['AvgRoomPrice', 'NumAdults','NumChildren', 'NumWeekNights', 'NumWeekendNights']].transform('mean')
-# df[['Canceled']] = grouped_df[['BookingStatus']].transform('sum')
-# pd.set_option('display.max_columns', None)
-
-# print (df[['RoomType', 'AvgPriceMean','AvgNumWeekNights', 'AvgNumWeekendNights', 'AdultCount', 'ChildCount', 'Canceled']].head(50))
+#print (df[['RoomType', 'AvgPriceMean','AvgNumWeekNights', 'AvgNumWeekendNights', 'AdultCount', 'ChildCount', 'Canceled']].head(50))
