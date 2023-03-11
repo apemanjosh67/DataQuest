@@ -17,13 +17,6 @@ from sklearn.model_selection import train_test_split
 
 pd.options.display.max_columns = None
 
-
-# Function for replacing string data into numeric values
-def get_numeric_value(datf, items):
-    for i in range(len(items)):
-        datf = datf.replace({items[i]: i})
-    return datf
-
 #Get the Dataframe
 df = pd.read_csv('trainingdata.csv')
 #print (df.head)
