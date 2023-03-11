@@ -1,69 +1,42 @@
 import time
-#import sklearn as scikit
+import pandas as pd
+import pandas as pd
+import numpy as np
+
+import matplotlib.pyplot as plt
+import seaborn as sns
+sns.set_theme()
+sns.set_palette(sns.color_palette(['#851836', '#edbd17']))
+sns.set_style("darkgrid")
+
+from sklearn.preprocessing import MinMaxScaler
+from sklearn.decomposition import PCA
 from sklearn.linear_model import LinearRegression
-import numpy as numpy
-import matplotlib.pylab as plt
-import math
+from sklearn.metrics import mean_squared_error
+from sklearn.model_selection import train_test_split
 
-booking_id = 0
-lead_time = 1
-arrival_year = 2
-arrival_month = 3
-arrival_date = 4
-num_weekend_nights = 5
-num_week_nights = 6
-meal_plan = 7
-parking = 8
-room_type = 9
-num_adults = 10
-num_children = 11
-market_segment = 12
-repeated_guest = 13
-num_prev_cancellations = 14
-num_previous_non_cancelled = 15
-avg_room_price = 16
-special_requests = 17
-booking_status = 18
+#Get the Dataframe
+df = pd.read_csv('trainingdata.csv')
+print (df.head)
 
-def get_data(filename):
+#Change the string values to numerical values
+df['BookingStatus'] = df['BookingStatus'].replace({'Not_Canceled':0, 'Canceled': 1})
+print (df.head)
 
-    data = open(filename, "r")
-    lines = data.readlines()
-    lines.pop(0)
+df['RoomType'] = df['BookingStatus'].replace({'Room_Type 1': 1, 'Room_Type 2': 2,'Room_Type 3': 3,'Room_Type 4': 4,'Room_Type 5': 5,'Room_Type 6': 6})
+print (df.head)
 
-    DATA = []
+df['MealPlan'] = df['MealPlan'].replace({'Not Selected': 0, 'Meal Plan 1': 1, 'Meal Plan 2' : 2})
+print (df.head)
+
+df['MarketSegment'] = df['MarketSegment'].replace({'Offline' : 0,'Online' : 1,'Corporate' : 2,'Complementary' : 3})
 
 
-    for i in range(18):
-        DATA.append([])
 
-    for line in lines:
-        line_data = line.split(",")
-        for i in range(len(DATA)):
-            DATA[i].append(line_data[i])
+#grouped_df = df.groupby('RoomType')
 
-    return DATA
+#df[['AvgPriceMean', 'AdultCount','ChildCount','AvgNumWeekNights', 'AvgNumWeekendNights']] = grouped_df[['AvgRoomPrice', 'NumAdults','NumChildren', 'NumWeekNights', 'NumWeekendNights']].transform('mean')
+#df[['Canceled']] = grouped_df[['BookingStatus']].transform('sum')
+#pd.set_option('display.max_columns', None)
 
-def get_narray(array):
-    x = []
-    for i in range(len(array)-1):
-        arr = [array[i], array[i+1]]
-        for j in range(len(arr)):
-            arr[j] = int(math.floor(float(arr[j])))
-        x.append(arr)
-
-    return numpy.array(x)
-
-
-DATA = get_data("trainingdata.csv")
-
-X = get_narray(DATA[num_adults])
-Y = get_narray(DATA[avg_room_price])
-
-
-mod = LinearRegression().fit(X,Y)
-#pred = mod.predict(X)
-
-#plt.scatter(pred,Y)
-plt.scatter(X,Y)
-plt.show()
+#print (df[['RoomType', 'AvgPriceMean','AvgNumWeekNights', 'AvgNumWeekendNights', 'AdultCount', 'ChildCount', 'Canceled']].head(50))
