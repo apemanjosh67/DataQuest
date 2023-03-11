@@ -1,5 +1,8 @@
 import time
-import sklearn as scikit
+#import sklearn as scikit
+from sklearn.linear_model import LinearRegression
+import numpy as numpy
+import matplotlib.pylab as plt
 
 data = open("trainingdata.csv", "r")
 lines = data.readlines()
@@ -35,4 +38,20 @@ for line in lines:
     for i in range(len(DATA)):
         DATA[i].append(line_data[i])
 
-print(DATA[arrival_date][0])
+
+
+x = []
+for i in range(len(DATA[arrival_date])-1):
+    arr = [DATA[arrival_date][i], DATA[arrival_date][i+1]]
+    for j in range(len(arr)):
+        arr[j] = int(arr[j])
+    x.append(arr)
+X = numpy.array(x)
+Y = X
+
+
+mod = LinearRegression().fit(X,Y)
+pred = mod.predict(X)
+
+plt.scatter(pred,Y)
+plt.show()
