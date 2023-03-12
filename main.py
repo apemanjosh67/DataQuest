@@ -20,7 +20,7 @@ def get_numeric_value(datf):
     for i in range(len(datf)):
         if not datf[i] in items:
             # String is not in the list, add it at the end
-            things.append(datf[i])
+            items.append(datf[i])
 
     for i in range(len(items)):
         # Replace string with index integer
