@@ -1,28 +1,44 @@
 import time
 import pandas as pd
+import pandas as pd
 import numpy as np
-import sklearn
-from sklearn.linear_model import LogisticRegression
+from sklearn import datasets, linear_model
+from sklearn.model_selection import train_test_split
+import matplotlib.pyplot as plt
 
+from sklearn.preprocessing import MinMaxScaler
+from sklearn.decomposition import PCA
+from sklearn.linear_model import LinearRegression, LogisticRegression
+from sklearn.metrics import mean_squared_error
+from sklearn.model_selection import train_test_split
 
 
 # Function for replacing string data into numeric values
-def get_numeric_value(datf, items):
+def get_numeric_value(datf):
+    # Create list to store all different strings in the column
+    items = []
+    for i in range(len(datf)):
+        if not datf[i] in items:
+            # String is not in the list, add it at the end
+            items.append(datf[i])
+
     for i in range(len(items)):
+        # Replace string with index integer
         datf = datf.replace({items[i]: i})
+
     return datf
+
 
 # Get the Dataframe
 df = pd.read_csv('trainingdata.csv')
 
 # Replace all string data with numeric values
 
+df['RoomType'] = get_numeric_value(df['RoomType'])
 
-df['RoomType'] = get_numeric_value(df['RoomType'], ['Room_Type 1', 'Room_Type 2', 'Room_Type 3', 'Room_Type 4', 'Room_Type 5', 'Room_Type 6', 'Room_Type 7'])
+df['MarketSegment'] = get_numeric_value(df['MarketSegment'])
 
-df['MarketSegment'] = get_numeric_value(df['MarketSegment'], ['Offline', 'Online', 'Corporate', 'Complementary', 'Aviation'])
-
-df['BookingStatus'] = get_numeric_value(df['BookingStatus'], ['Canceled', 'Not_Canceled'])
+df['BookingStatus'] = get_numeric_value(df['BookingStatus'])
 
 #Remove parking, arrival year, repeated guest, arrival year (PREDICT BOOKING STATUS)
 df.drop(['Parking'], axis=1, inplace = True)
