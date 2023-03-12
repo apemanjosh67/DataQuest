@@ -4,7 +4,6 @@ import numpy as np
 from sklearn import datasets, linear_model
 from sklearn.model_selection import train_test_split
 import matplotlib.pyplot as plt
-
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.decomposition import PCA
 from sklearn.linear_model import LinearRegression, LogisticRegression
@@ -28,7 +27,7 @@ def get_numeric_value(datf):
     return datf
 
 
-# Get the Dataframe
+# Create a dataframe out of the trainingdata.csv file
 df = pd.read_csv('trainingdata.csv')
 
 # Replace all string data with numeric values
@@ -45,12 +44,6 @@ df.drop(['MealPlan'], axis=1, inplace = True)
 df.drop(['RepeatedGuest'], axis=1, inplace = True)
 df.drop(['ArrivalYear'], axis=1, inplace = True)
 
-#Replace Adults and Children with number of guests and whether they have children or not
-df['NumAdults'] = df[['NumAdults', 'NumChildren']].sum(axis=1)
-df['NumChildren'] = np.where(df['NumChildren'] > 0, 1, 0)
-df.rename(columns={'NumAdults': 'NumberOfGuests'}, inplace=True)
-df.rename(columns={'NumChildren': 'HasChildren'}, inplace=True)
-
 #Set the leadtime to intervals to make testing quicker
 bins = [0, 40, 80, 120, 160, 200, 240, 280, 320, 360, 400, 440, 480]
 labels = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
@@ -60,31 +53,29 @@ df.rename(columns={'LeadTime': 'LeadTimeInterval'}, inplace=True)
 pd.set_option('display.max_columns', None)
 print(df.head(10))
 
-#Create X features
-feature_cols = ['LeadTimeInterval', 'ArrivalMonth', 'NumWeekendNights', 'NumWeekNights', 'RoomType', 'NumberOfGuests', 'HasChildren', 'MarketSegment', 'NumPrevCancellations', 'AvgRoomPrice', 'SpecialRequests']
+# Create X features
+feature_cols = ['LeadTimeInterval', 'ArrivalMonth', 'NumWeekendNights', 'NumWeekNights', 'RoomType', 'NumAdults', 'NumChildren', 'MarketSegment', 'NumPrevCancellations', 'AvgRoomPrice', 'SpecialRequests']
 X = df.loc[:, feature_cols]
 print(X.shape)
 
-#Create Y responses
+# Create Y responses
 Y = df.BookingStatus
 print(Y.shape)
 
-#Make scikit model
+# Make scikit model
 logreg = LogisticRegression(max_iter=30000)
 print(logreg.fit(X, Y))
 
-#Get the test Data
+# Get the test Data
+# Create a dataframe out of the testdata.csv file
 test = pd.read_csv('trainingdata.csv')
-test['NumAdults'] = test[['NumAdults', 'NumChildren']].sum(axis=1)
-test['NumChildren'] = np.where(test['NumChildren'] > 0, 1, 0)
-test.rename(columns={'NumAdults': 'NumberOfGuests'}, inplace=True)
-test.rename(columns={'NumChildren': 'HasChildren'}, inplace=True)
+
+# Change the string values to numerical Values
 test['RoomType'] = get_numeric_value(test['RoomType'])
-
 test['MarketSegment'] = get_numeric_value(test['MarketSegment'])
-
 test['BookingStatus'] = get_numeric_value(test['BookingStatus'])
 
+# Make the prices in intervals instead of set values
 bins = [0, 40, 80, 120, 160, 200, 240, 280, 320, 360, 400, 440, 480]
 labels = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
 test['LeadTime'] = pd.cut(test['LeadTime'], bins=bins, labels=labels, include_lowest=True)
@@ -102,10 +93,13 @@ print("------------------------------------------------------------")
 print(f"Training Value: {df['BookingStatus'].sum()}")
 print(f"Predicted Cancellations: {test_data['BookingStatus'].sum()}")
 
+# Fill the BookingStatus coloumn with the predicted values
 test['BookingStatus'] = test_data['BookingStatus']
 
+# Change predicted values from numerical values back to string values
 test['BookingStatus'] = test['BookingStatus'].replace({0: 'Not_Canceled', 1: "Canceled"})
-test.to_csv('results.csv')
-print(df['BookingStatus'].sum())
-print(test_data['BookingStatus'].sum())
+
+# Save the dataframe into a csv file
+test.to_csv('team_18.csv')
+
 
