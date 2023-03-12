@@ -1,6 +1,5 @@
 import time
 import pandas as pd
-import pandas as pd
 import numpy as np
 from sklearn import datasets, linear_model
 from sklearn.model_selection import train_test_split
@@ -83,6 +82,7 @@ test.rename(columns={'NumChildren': 'HasChildren'}, inplace=True)
 test['RoomType'] = get_numeric_value(test['RoomType'])
 
 test['MarketSegment'] = get_numeric_value(test['MarketSegment'])
+
 test['BookingStatus'] = get_numeric_value(test['BookingStatus'])
 
 bins = [0, 40, 80, 120, 160, 200, 240, 280, 320, 360, 400, 440, 480]
@@ -97,6 +97,11 @@ print(X_new.shape)
 #Predict the values
 new_pred_class = logreg.predict(X_new)
 test_data = pd.DataFrame({'BookingStatus': new_pred_class})
+test_data.to_csv('results.csv')
+print("------------------------------------------------------------")
+print(f"Training Value: {df['BookingStatus'].sum()}")
+print(f"Predicted Cancellations: {test_data['BookingStatus'].sum()}")
+
 test['BookingStatus'] = test_data['BookingStatus']
 
 test['BookingStatus'] = test['BookingStatus'].replace({0: 'Not_Canceled', 1: "Canceled"})
