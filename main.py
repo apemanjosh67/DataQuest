@@ -63,12 +63,12 @@ Y = df.BookingStatus
 print(Y.shape)
 
 # Make scikit model
-logreg = LogisticRegression(max_iter=30000)
+logreg = LogisticRegression(max_iter=7254)
 print(logreg.fit(X, Y))
 
 # Get the test Data
 # Create a dataframe out of the testdata.csv file
-test = pd.read_csv('trainingdata.csv')
+test = pd.read_csv('testdata.csv')
 
 # Change the string values to numerical Values
 test['RoomType'] = get_numeric_value(test['RoomType'])
