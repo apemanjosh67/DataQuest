@@ -80,11 +80,10 @@ test['NumAdults'] = test[['NumAdults', 'NumChildren']].sum(axis=1)
 test['NumChildren'] = np.where(test['NumChildren'] > 0, 1, 0)
 test.rename(columns={'NumAdults': 'NumberOfGuests'}, inplace=True)
 test.rename(columns={'NumChildren': 'HasChildren'}, inplace=True)
-test['RoomType'] = get_numeric_value(test['RoomType'], ['Room_Type 1', 'Room_Type 2', 'Room_Type 3', 'Room_Type 4', 'Room_Type 5', 'Room_Type 6', 'Room_Type 7'])
+test['RoomType'] = get_numeric_value(test['RoomType'])
 
-test['MarketSegment'] = get_numeric_value(test['MarketSegment'], ['Offline', 'Online', 'Corporate', 'Complementary', 'Aviation'])
-
-test['BookingStatus'] = get_numeric_value(test['BookingStatus'], ['Canceled', 'Not_Canceled'])
+test['MarketSegment'] = get_numeric_value(test['MarketSegment'])
+test['BookingStatus'] = get_numeric_value(test['BookingStatus'])
 
 bins = [0, 40, 80, 120, 160, 200, 240, 280, 320, 360, 400, 440, 480]
 labels = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
@@ -98,6 +97,10 @@ print(X_new.shape)
 #Predict the values
 new_pred_class = logreg.predict(X_new)
 test_data = pd.DataFrame({'BookingStatus': new_pred_class})
-test_data.to_csv('results.csv')
+test['BookingStatus'] = test_data['BookingStatus']
+
+test['BookingStatus'] = test['BookingStatus'].replace({0: 'Not_Canceled', 1: "Canceled"})
+test.to_csv('results.csv')
 print(df['BookingStatus'].sum())
 print(test_data['BookingStatus'].sum())
+
